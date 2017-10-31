@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Put Qiita popular articles feed for Alexa Flash Briefing Skill to S3
+Parameters:
+  DestinationS3Region:
+    Type: String
+  DestinationS3Bucket:
+    Type: String
+  DestinationS3Key:
+    Type: String
+  IAMRolePath:
+    Type: String
+Conditions:
+  UsePathInRole: !Not [!Equals [!Ref IAMRolePath, '']]
+Resources:
+  PushFeedFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.putFeed
+      Runtime: nodejs6.10
+      CodeUri: ./
+      Role: !GetAtt PushFeedFunctionRole.Arn
+      Tracing: Active
+      Timeout: 30
+      Environment:
+        Variables:
+          DESTINATION_S3_REGION: !Ref DestinationS3Region
+          DESTINATION_S3_BUCKET: !Ref DestinationS3Bucket
+          DESTINATION_S3_KEY: !Ref DestinationS3Key
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+  PushFeedFunctionRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement: 
+          - Effect: Allow
+            Principal: 
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: !If [UsePathInRole, !Ref IAMRolePath, !Ref 'AWS::NoValue']
+      Policies:
+        - PolicyName: "UploadFeed"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                Resource:
+                  - !Sub arn:aws:s3:::${DestinationS3Bucket}/${DestinationS3Key}
+Outputs:
+  LambdaFunctionArn:
+    Description: an ARN of a created Lambda function
+    Value: !GetAtt PushFeedFunction.Arn

@@ -1,0 +1,26 @@
+{
+  "name": "qiita-popular-items-for-alexa",
+  "version": "0.1.0",
+  "description": "Put Qiita popular articles feed for Alexa Flash Briefing Skill to S3",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.141.0",
+    "aws-xray-sdk": "^1.1.4",
+    "aws-xray-sdk-core": "^1.1.4",
+    "moment-timezone": "^0.5.13",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "eslint": "^4.10.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-promise": "^3.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Increments Inc.",
+  "license": "Apache-2.0"
+}
