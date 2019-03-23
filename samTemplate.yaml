@@ -17,7 +17,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.putFeed
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       CodeUri: ./
       Role: !GetAtt PushFeedFunctionRole.Arn
       Tracing: Active
@@ -34,12 +34,12 @@ Resources:
             Schedule: rate(1 hour)
   PushFeedFunctionRole:
     Type: AWS::IAM::Role
-    Properties: 
+    Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
-        Statement: 
+        Statement:
           - Effect: Allow
-            Principal: 
+            Principal:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
